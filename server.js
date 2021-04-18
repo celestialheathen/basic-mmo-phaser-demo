@@ -31,7 +31,7 @@ const wsServer = new Server( {
     server
 })
 
-wsServer.on("connection", request => {
+wsServer.on("request", request => {
     // A connection
     const connection = request.accept(null, request.origin)
     connection.on("open", () => console.log("open!"))
