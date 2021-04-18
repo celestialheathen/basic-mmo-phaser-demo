@@ -5,6 +5,7 @@ const express = require("express")
 
 const PORT = process.env.PORT || 3000 
 
+
 const server = express()
 
 // localhost:5500 is where the game page will be served
@@ -30,7 +31,7 @@ const wsServer = new Server( {
     server
 })
 
-wsServer.on("request", request => {
+wsServer.on("connection", request => {
     // A connection
     const connection = request.accept(null, request.origin)
     connection.on("open", () => console.log("open!"))
