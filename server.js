@@ -8,7 +8,7 @@ app.use('/js', express.static(__dirname + '/js'))
 app.use('/assets', express.static(__dirname + '/assets'))
 app.get("/", (req, res) => res.sendFile(__dirname + "/index.html"))
 
-app.listen(5500, ()=> console.log("Client Port, listening.. on 5500"))
+// app.listen(5500, ()=> console.log("Client Port, listening.. on 5500"))
 
 const websocketServer = require("websocket").server
 const httpServer = http.createServer()
