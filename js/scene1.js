@@ -7,7 +7,8 @@ class Scene1 extends Phaser.Scene {
         this.playerId = null
         this.x = null
         this.y = null
-        this.ws = new WebSocket(`ws://localhost:${process.env.PORT}`)
+        const HOST = location.origin.replace(/^http/, 'ws')
+        this.ws = new WebSocket(HOST)
         this.ws.onmessage = (message) => {
             const response = JSON.parse(message.data)
 
