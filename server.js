@@ -13,7 +13,7 @@ app.listen(5500, ()=> console.log("Client Port, listening.. on 5500"))
 const websocketServer = require("websocket").server
 const httpServer = http.createServer()
 
-httpServer.listen(process.env.PORT || 9090, () => console.log("Server Port, listening.. on 9090"))
+httpServer.listen(process.env.PORT || 9090, () => console.log("Server Port, listening on ", httpServer.address().port))
 
 
 // Store a list of all the players
