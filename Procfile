@@ -1,1 +1,1 @@
-web: index.html
+web: node js/scene1.js
