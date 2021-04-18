@@ -8,12 +8,12 @@ app.use('/js', express.static(__dirname + '/js'))
 app.use('/assets', express.static(__dirname + '/assets'))
 app.get("/", (req, res) => res.sendFile(__dirname + "/index.html"))
 
-app.listen(process.env.PORT, ()=> console.log("Client Port, listening.. on ", app.get('port')))
+app.listen(process.env.PORT, ()=> console.log("Client Port, listening.. on 5500"))
 
 const websocketServer = require("websocket").server
 const httpServer = http.createServer()
 
-httpServer.listen(process.env.PORT || 9090, () => console.log("Server Port, listening on ", httpServer.address().port))
+// httpServer.listen(process.env.PORT || 9090, () => console.log("Server Port, listening on ", httpServer.address().port))
 
 
 // Store a list of all the players
@@ -21,7 +21,8 @@ let players = []
 
 
 const wsServer = new websocketServer( {
-    "httpServer": httpServer
+    // "httpServer": httpServer
+    "httpServer": app
 })
 
 wsServer.on("request", request => {
