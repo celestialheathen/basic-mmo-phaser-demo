@@ -1,12 +1,9 @@
-// const http = require("http") // Load in http module
-// const app = require("express")() // Load in express module
-// const { Server } = require('ws')
 const express = require("express") 
 const websocketServer = require("websocket").server
 const app = express()
 const http = require('http')
 
-let PORT = process.env.PORT || 3000 
+let PORT = process.env.PORT || 5500
 
 app.use('/js', express.static(__dirname + '/js'))
 app.use('/assets', express.static(__dirname + '/assets'))
@@ -16,24 +13,12 @@ app.get("/", (req, res) => res.sendFile(__dirname + "/index.html"))
 const server = http.createServer(app)
 server.listen(PORT)
 
-// localhost:5500 is where the game page will be served
-// It will create a socket connect to 9090
-
-
-// server.listen(PORT, ()=> console.log("Client Port, listening.. on ", PORT))
-
-// const websocketServer = require("websocket").server
-// const httpServer = http.createServer()
-
-// httpServer.listen(process.env.PORT || 9090, () => console.log("Server Port, listening on ", httpServer.address().port))
-
 
 // Store a list of all the players
 let players = []
 
 
 const wsServer = new websocketServer( {
-    // "httpServer": httpServer
     "httpServer": server
 })
 

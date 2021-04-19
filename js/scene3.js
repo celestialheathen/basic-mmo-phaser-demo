@@ -55,7 +55,7 @@ class Scene3 extends Phaser.Scene {
         this.saveBtn.innerText = 'Save'
 
         this.inventoryLabel = document.createElement('label')
-        this.inventoryLabel.style = 'padding: 10px; width: 450px; color: white; border: 1px solid black'
+        this.inventoryLabel.style = 'padding: 10px; width: 450px; color: white'
         this.inventoryLabel.innerText = ''
 
         this.musicBtn = document.createElement('button')
@@ -84,6 +84,7 @@ class Scene3 extends Phaser.Scene {
         //             "y": this.player.y
         //         }
         //         this.ws.send(JSON.stringify(payLoad))
+        //         this.userInput.value = ""
         //     }           
         // })
 
@@ -208,7 +209,7 @@ class Scene3 extends Phaser.Scene {
         this.player.health = this.health
 
         this.lifeBar = document.createElement('label')
-        this.lifeBar.style = `height: 18px; padding: 10px; width: ${this.player.health / 3}px; background-color: green; border: 1px solid black`
+        this.lifeBar.style = `height: 18px; padding: 10px; width: ${this.player.health / 3}px; background-color: green`
         let lifeBarElement = this.add.dom(this.sys.canvas.width / 2 - 430, this.sys.canvas.height - 50, this.lifeBar).setDepth(1)
 
 
@@ -396,7 +397,7 @@ class Scene3 extends Phaser.Scene {
             this.physics.add.collider(this.player, this.firebomb, (player, firebomb) => {
                 firebomb.destroy()
                 this.player.health -= 30
-                this.lifeBar.style = `height: 18px; padding: 10px; width: ${this.player.health / 3}px; background-color: green; border: 1px solid black`
+                this.lifeBar.style = `height: 18px; padding: 10px; width: ${this.player.health / 3}px; background-color: green`
             })
 
         })

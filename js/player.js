@@ -6,7 +6,7 @@ class Player extends Phaser.GameObjects.Sprite {
         this.key = config.key
 
         config.scene.physics.add.existing(this)
-        // this.body.setCollideWorldBounds(true)
+        this.body.setCollideWorldBounds(true)
 
         // this.body.setImmovable()  Commented out due to in scene1 able to walk through other npc and enemies
         config.scene.add.existing(this)
