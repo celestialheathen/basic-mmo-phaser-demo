@@ -2,7 +2,7 @@
 // const app = require("express")() // Load in express module
 // const { Server } = require('ws')
 const express = require("express") 
-const WebSocketServer = require('ws').Server
+const websocketServer = require("websocket").server
 const app = express()
 const http = require('http')
 
@@ -32,9 +32,9 @@ server.listen(PORT)
 let players = []
 
 
-const wsServer = new WebSocketServer( {
+const wsServer = new websocketServer( {
     // "httpServer": httpServer
-    server: server
+    "httpServer": server
 })
 
 wsServer.on("request", request => {
