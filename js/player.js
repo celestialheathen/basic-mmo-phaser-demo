@@ -12,8 +12,8 @@ class Player extends Phaser.GameObjects.Sprite {
         config.scene.add.existing(this)
         this.setScale(1.5)
 
-        this.setInteractive()
-        this.on('pointerdown', this.displayStatus)
+        this.setInteractive({draggable: true})
+        // this.on('pointerdown', this.displayStatus)
 
         this.health = 180
 

@@ -246,6 +246,7 @@ class Scene2 extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys()
         this.talkKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE)
         this.attackKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO)
+        this.input.addPointer(2)
 
 
         this.bg_sound = this.sound.add('aog', {loop: true, volume: 0.1})

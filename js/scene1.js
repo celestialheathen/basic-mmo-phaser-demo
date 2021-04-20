@@ -226,10 +226,23 @@ class Scene1 extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys()
         this.talkKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE)
         this.attackKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO)
+        this.input.addPointer(2)
     }
 
     update() {
         // this.player.update(this.cursors)
+        this.player.on("drag", (pointer, dragX, dragY) => {
+            this.player.x = dragX
+            this.player.y = dragY
+            const payLoad = {
+                method: "movement",
+                "currentFacing": this.currentFacing,
+                "playerId": this.playerId,
+                "x": this.player.x,
+                "y": this.player.y
+            }
+            this.ws.send(JSON.stringify(payLoad))
+        })
 
         if (this.cursors.right.isDown) {
             this.player.body.setVelocityX(350)
