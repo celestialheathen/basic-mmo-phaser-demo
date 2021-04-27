@@ -1,9 +1,8 @@
-const http = require("http") // Load in http module
-const app = require("express")() // Load in express module
+const http = require("http") 
+const app = require("express")() 
 const express = require("express") 
 
 // localhost:5500 is where the game page will be served
-// It will create a socket connect to 9090
 app.use('/js', express.static(__dirname + '/js'))
 app.use('/assets', express.static(__dirname + '/assets'))
 app.get("/", (req, res) => res.sendFile(__dirname + "/index.html"))
@@ -85,8 +84,6 @@ wsServer.on("request", request => {
                     player.y = y
                 }
             })
-            // console.log("Moved, x: ", x)
-            // console.log("Moved, y: ", y)
         }
 
         if (result.method === "chat") {
@@ -123,8 +120,6 @@ wsServer.on("request", request => {
         "y": y
     }
 
-
-    // The payload to be sent back to the client
     const payLoad = {
         "method": "connect",
         "playerId": playerId,
