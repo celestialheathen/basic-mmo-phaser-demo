@@ -48,7 +48,6 @@ wsServer.on("request", request => {
         // Broadcast the positions of other players to current player
         if (result.method === "currentPlayers") {
 
-            // console.log(players)
             players.forEach (player => {
                 if (player.playerId !== playerId) {
                     const payLoad = {

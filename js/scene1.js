@@ -31,23 +31,6 @@ class Scene1 extends Phaser.Scene {
     }
 
     create() {
-        // Store new player information into database 
-        const playerData = {
-            'pid': this.playerId,
-            'x': this.x,
-            'y': this.y
-        }
-        fetch('http://localhost:3000/players', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(playerData)
-        })
-        // .then(r => r.json())
-        // .then(data => console.log("Logged new player to database"))
-
-
         // Create chatbox input text field and submit button
         this.userInput = document.createElement('input')
         this.userInput.type = "text"
@@ -57,46 +40,15 @@ class Scene1 extends Phaser.Scene {
         submitBtn.style = 'padding: 10px'
         submitBtn.innerText = "..."
 
-        this.itemBtn = document.createElement('button')
-        this.itemBtn.style = 'padding: 10px'
-        this.itemBtn.innerText = 'Items'
-
-        this.saveBtn = document.createElement('button')
-        this.saveBtn.style = 'padding: 10px'
-        this.saveBtn.innerText = 'Save'
-
-        this.inventoryLabel = document.createElement('label')
-        this.inventoryLabel.style = 'padding: 10px; width: 450px; color: white'
-        this.inventoryLabel.innerText = ''
-
         this.musicBtn = document.createElement('button')
         this.musicBtn.style = 'padding: 7px'
         this.musicBtn.innerText = '🎧'
 
         let userInputElement = this.add.dom(this.sys.canvas.width / 2, this.sys.canvas.height - 50, this.userInput).setDepth(1)
         let submitBtnElement = this.add.dom(this.sys.canvas.width / 2 + 290, this.sys.canvas.height - 50, submitBtn).setDepth(1)
-        let itemBtnElement = this.add.dom(this.sys.canvas.width / 2 - 300, this.sys.canvas.height - 50, this.itemBtn).setDepth(1)
-        let inventoryLabelElement = this.add.dom(this.sys.canvas.width / 2, this.sys.canvas.height - 150, this.inventoryLabel).setDepth(1)
-        let saveBtnElement = this.add.dom(this.sys.canvas.width / 2 + 350, this.sys.canvas.height - 50, this.saveBtn).setDepth(1)
         let musicBtnElement = this.add.dom(this.sys.canvas.width / 2 + 410, this.sys.canvas.height - 50, this.musicBtn).setDepth(1)
 
-        let areItemsShown = false
         this.musicOn = false
-
-        itemBtnElement.addListener('click')
-        itemBtnElement.on('click', () => {
-            if (areItemsShown === false) {
-                fetch('http://localhost:3000/items')
-                .then(r => r.json())
-                .then(items => items.forEach((item) => {
-                    this.inventoryLabel.textContent += item.name + " "
-                }))
-                areItemsShown = !areItemsShown
-            } else {
-                areItemsShown = !areItemsShown
-                this.inventoryLabel.textContent = ""
-            }
-        })
 
         submitBtnElement.addListener('click')
         submitBtnElement.on('click', () => {
@@ -112,26 +64,6 @@ class Scene1 extends Phaser.Scene {
                 this.ws.send(JSON.stringify(payLoad))
                 this.userInput.value = ""
             }           
-        })
-
-
-
-        saveBtnElement.addListener('click') 
-        saveBtnElement.on('click', () => {
-            const newData = {
-                "x": this.player.x,
-                "y": this.player.y
-            }
-            const playerURL = this.playerId
-            fetch(`http://localhost:3000/players/${playerURL}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(newData)
-            })
-            .then(r => r.json())
-            .then(data => {console.log(playerURL, this.player.x, this.player.y)})
         })
 
 
@@ -216,11 +148,6 @@ class Scene1 extends Phaser.Scene {
         this.lifeBar.style = `height: 18px; padding: 10px; width: ${this.player.health / 3}px; background-color: green`
         let lifeBarElement = this.add.dom(this.sys.canvas.width / 2 - 430, this.sys.canvas.height - 50, this.lifeBar).setDepth(1)
 
-        // Add camera to follow main player
-        // this.cameras.main.setBounds(0, 0, bg.displayWidth, bg.displayHeight)
-        // this.cameras.main.startFollow(this.player)
-        // this.cameras.main.setZoom(2)
-
         this.bg_sound = this.sound.add('morning', {loop: true, volume: 0.1})
 
         this.cursors = this.input.keyboard.createCursorKeys()
@@ -230,7 +157,6 @@ class Scene1 extends Phaser.Scene {
     }
 
     update() {
-        // this.player.update(this.cursors)
         this.player.on("drag", (pointer, dragX, dragY) => {
             this.player.x = dragX
             this.player.y = dragY
@@ -333,14 +259,9 @@ class Scene1 extends Phaser.Scene {
         if (this.player.x >= this.sys.canvas.width - 40) {
             this.bg_sound.stop()
             this.ws.close()
-            const playerURL = this.playerId
-            fetch(`http://localhost:3000/players/${playerURL}`, {
-                method: "DELETE"
-            })
             this.scene.start("scene_2", {"player_y_pos": this.player.y, "playerId": this.playerId, "musicOn": this.musicOn})
         }   
 
-        // this.cameras.main.setZoom(Phaser.Math.Clamp(this.cameras.main.zoom, 1.5, 1.5)
         }
 
 
@@ -368,9 +289,7 @@ class Scene1 extends Phaser.Scene {
         updateLocation(playerInfo) {
             this.otherPlayers.getChildren().forEach(player => {
                 if (player.playerId === playerInfo.playerId) {
-                    // console.log(player + "moved!")
-                    // console.log("New x : " + playerInfo.x)
-                    // console.log("New y : " + playerInfo.y)
+
                     switch (playerInfo.currentFacing) {
                         case 'LEFT': 
                         player.anims.play('left', true)
@@ -397,10 +316,6 @@ class Scene1 extends Phaser.Scene {
             this.otherPlayers.getChildren().forEach(player => {
                 if (player.playerId !== info.playerId) {
 
-                    // console.log(info.x)
-                    // console.log(info.y)
-                    // console.log("Msg received: ", info.body)
-                    // this.output.innerText = `Msg received from ${info.playerId}: ${info.body}`
                     let bubble = this.add.graphics({x: info.x + 30, y: info.y - 65})
             
                     bubble.fillStyle(0xffffff, 1) 

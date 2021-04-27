@@ -7,7 +7,6 @@ class Scene2 extends Phaser.Scene {
         this.y = data.player_y_pos
         this.playerId = data.playerId
         this.musicOn = data.musicOn
-        console.log(this.playerId)
     }
 
     preload() {
@@ -39,8 +38,6 @@ class Scene2 extends Phaser.Scene {
     }
 
     create() {
-
-
         // Create chatbox input text field and submit button
         this.userInput = document.createElement('input')
         this.userInput.type = "text"
@@ -50,31 +47,13 @@ class Scene2 extends Phaser.Scene {
         submitBtn.style = 'padding: 10px'
         submitBtn.innerText = "..."
 
-        this.itemBtn = document.createElement('button')
-        this.itemBtn.style = 'padding: 10px'
-        this.itemBtn.innerText = 'Items'
-
-        this.saveBtn = document.createElement('button')
-        this.saveBtn.style = 'padding: 10px'
-        this.saveBtn.innerText = 'Save'
-
-        this.inventoryLabel = document.createElement('label')
-        this.inventoryLabel.style = 'padding: 10px; width: 450px; color: white'
-        this.inventoryLabel.innerText = ''
-
         this.musicBtn = document.createElement('button')
         this.musicBtn.style = 'padding: 7px'
         this.musicBtn.innerText = '🎧'
 
         let userInputElement = this.add.dom(this.sys.canvas.width / 2, this.sys.canvas.height - 50, this.userInput).setDepth(1)
         let submitBtnElement = this.add.dom(this.sys.canvas.width / 2 + 290, this.sys.canvas.height - 50, submitBtn).setDepth(1)
-        let itemBtnElement = this.add.dom(this.sys.canvas.width / 2 - 300, this.sys.canvas.height - 50, this.itemBtn).setDepth(1)
-        let inventoryLabelElement = this.add.dom(this.sys.canvas.width / 2, this.sys.canvas.height - 150, this.inventoryLabel).setDepth(1)
-        let saveBtnElement = this.add.dom(this.sys.canvas.width / 2 + 350, this.sys.canvas.height - 50, this.saveBtn).setDepth(1)
         let musicBtnElement = this.add.dom(this.sys.canvas.width / 2 + 410, this.sys.canvas.height - 50, this.musicBtn).setDepth(1)
-
-
-        let areItemsShown = false
 
         // submitBtnElement.addListener('click')
         // submitBtnElement.on('click', () => {
@@ -92,38 +71,6 @@ class Scene2 extends Phaser.Scene {
         //     }           
         // })
 
-        itemBtnElement.addListener('click')
-        itemBtnElement.on('click', () => {
-            if (areItemsShown === false) {
-                fetch('http://localhost:3000/items')
-                .then(r => r.json())
-                .then(items => items.forEach((item) => {
-                    this.inventoryLabel.textContent += item.name + " "
-                }))
-                areItemsShown = !areItemsShown
-            } else {
-                areItemsShown = !areItemsShown
-                this.inventoryLabel.textContent = ""
-            }
-        })
-
-        saveBtnElement.addListener('click') 
-        saveBtnElement.on('click', () => {
-            const newData = {
-                "x": this.player.x,
-                "y": this.player.y
-            }
-            const playerURL = this.playerId
-            fetch(`http://localhost:3000/players/${playerURL}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(newData)
-            })
-            .then(r => r.json())
-            .then(data => {console.log(playerURL, this.player.x, this.player.y)})
-        })
 
         musicBtnElement.addListener('click')
         musicBtnElement.on('click', () => {
@@ -254,39 +201,25 @@ class Scene2 extends Phaser.Scene {
 
         this.physics.add.collider(this.player, this.groupOfNpcs, (player, group) => {
             if (this.input.keyboard.checkDown(this.talkKey, 2000)) {
-                group.createSpeechBubble()
-
-                fetch(`http://localhost:3000/items/`, {
-                    method: "DELETE"
-                })         
+                group.createSpeechBubble()        
             } 
         })
 
 
 
         this.physics.add.overlap(this.player, this.groupOfItems, (player, group) => {
-
-            fetch('http://localhost:3000/items', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({'pid': this.playerId, 'name': group.key})
-            })
-            .then(r => r.json())
-            .then(data => {
-                console.log("Item successfully logged to db")
-            })
             this.player.health += 20
             this.lifeBar.style = `height: 18px; padding: 10px; width: ${this.player.health / 3}px; background-color: green`
-            console.log(this.player.health)
             group.destroy()
         })
 
     }
 
     update() {
+        this.player.on("drag", (pointer, dragX, dragY) => {
+            this.player.x = dragX
+            this.player.y = dragY
+        })
 
         if (this.cursors.right.isDown) {
             this.player.body.setVelocityX(350)
@@ -350,8 +283,6 @@ class Scene2 extends Phaser.Scene {
             this.bg_sound.stop()
             this.scene.start("scene_3", {"player_x_pos": this.player.x, "playerId": this.playerId, "lifebar": this.player.health, "musicOn": this.musicOn})
         }  
-
-        // this.cameras.main.setZoom(Phaser.Math.Clamp(this.cameras.main.zoom, 1.5, 1.5))
 
     }
 

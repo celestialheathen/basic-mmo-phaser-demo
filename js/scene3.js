@@ -8,13 +8,9 @@ class Scene3 extends Phaser.Scene {
         this.playerId = data.playerId
         this.health = data.lifebar
         this.musicOn = data.musicOn
-        console.log(this.x)
-        console.log(this.playerId)
-        console.log("Life bar: " + this.health)
     }
 
     preload() {
-
         this.load.image('background', 'assets/background1.png')
 
         this.load.spritesheet('character', 'assets/character.png', {frameWidth: 32, frameHeight: 48})
@@ -36,7 +32,6 @@ class Scene3 extends Phaser.Scene {
     }
 
     create() {
-
         // Create chatbox input text field and submit button
         this.userInput = document.createElement('input')
         this.userInput.type = "text"
@@ -45,18 +40,6 @@ class Scene3 extends Phaser.Scene {
         let submitBtn = document.createElement('button')
         submitBtn.style = 'padding: 10px'
         submitBtn.innerText = "..."
-        
-        this.itemBtn = document.createElement('button')
-        this.itemBtn.style = 'padding: 10px'
-        this.itemBtn.innerText = 'Items'
-
-        this.saveBtn = document.createElement('button')
-        this.saveBtn.style = 'padding: 10px'
-        this.saveBtn.innerText = 'Save'
-
-        this.inventoryLabel = document.createElement('label')
-        this.inventoryLabel.style = 'padding: 10px; width: 450px; color: white'
-        this.inventoryLabel.innerText = ''
 
         this.musicBtn = document.createElement('button')
         this.musicBtn.style = 'padding: 7px'
@@ -64,13 +47,7 @@ class Scene3 extends Phaser.Scene {
 
         let userInputElement = this.add.dom(this.sys.canvas.width / 2, this.sys.canvas.height - 50, this.userInput).setDepth(1)
         let submitBtnElement = this.add.dom(this.sys.canvas.width / 2 + 290, this.sys.canvas.height - 50, submitBtn).setDepth(1)
-        let itemBtnElement = this.add.dom(this.sys.canvas.width / 2 - 300, this.sys.canvas.height - 50, this.itemBtn).setDepth(1)
-        let inventoryLabelElement = this.add.dom(this.sys.canvas.width / 2, this.sys.canvas.height - 150, this.inventoryLabel).setDepth(1)
-        let saveBtnElement = this.add.dom(this.sys.canvas.width / 2 + 350, this.sys.canvas.height - 50, this.saveBtn).setDepth(1)
         let musicBtnElement = this.add.dom(this.sys.canvas.width / 2 + 410, this.sys.canvas.height - 50, this.musicBtn).setDepth(1)
-
-
-        let areItemsShown = false
 
         // submitBtnElement.addListener('click')
         // submitBtnElement.on('click', () => {
@@ -88,38 +65,6 @@ class Scene3 extends Phaser.Scene {
         //     }           
         // })
 
-        itemBtnElement.addListener('click')
-        itemBtnElement.on('click', () => {
-            if (areItemsShown === false) {
-                fetch('http://localhost:3000/items')
-                .then(r => r.json())
-                .then(items => items.forEach((item) => {
-                    this.inventoryLabel.textContent += item.name + " "
-                }))
-                areItemsShown = !areItemsShown
-            } else {
-                areItemsShown = !areItemsShown
-                this.inventoryLabel.textContent = ""
-            }
-        })
-
-        saveBtnElement.addListener('click') 
-        saveBtnElement.on('click', () => {
-            const newData = {
-                "x": this.player.x,
-                "y": this.player.y
-            }
-            const playerURL = this.playerId
-            fetch(`http://localhost:3000/players/${playerURL}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(newData)
-            })
-            .then(r => r.json())
-            .then(data => {console.log(playerURL, this.player.x, this.player.y)})
-        })
 
         musicBtnElement.addListener('click')
         musicBtnElement.on('click', () => {
@@ -264,6 +209,10 @@ class Scene3 extends Phaser.Scene {
     }
 
     update() {
+        this.player.on("drag", (pointer, dragX, dragY) => {
+            this.player.x = dragX
+            this.player.y = dragY
+        })
 
         if (this.cursors.right.isDown) {
             this.player.body.setVelocityX(350)
@@ -325,7 +274,6 @@ class Scene3 extends Phaser.Scene {
 
             this.physics.add.collider(this.shuriken, this.groupOfEnemies, (shuriken, group) => {
                 shuriken.destroy()
-                // this.cameras.main.flash(400, 255)
                 group.health -= 20
                 if (group.health <= 0) {
                     group.destroy()
@@ -333,8 +281,6 @@ class Scene3 extends Phaser.Scene {
             })
         }
 
-
-        // this.cameras.main.setZoom(Phaser.Math.Clamp(this.cameras.main.zoom, 1.5, 1.5))
         if (this.player.health <= 0) {
             this.cameras.main.flash(500, 0xff000000)
             setInterval(this.gameOver, 600)
